@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle name="ActionBinding" display-name="<%displayName%>" type="monitorscript" singleton="true">
+	<version>
+		<id><%version%></id>
+		<date><%date%></date>
+		<author>Software AG</author>
+		<comments/>
+	</version>
+	<description>
+		Action Binding for EPL
+	</description>
+	<monitors>
+		<fileset dir="${ACTION_BINDING_HOME}">
+<%fileList%>
+		</fileset>
+	</monitors>
+</bundle>

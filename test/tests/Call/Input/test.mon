@@ -1,0 +1,33 @@
+using utils.Assert;
+using utils.TestComplete;
+using utils.TestFailed;
+
+using com.industry.actions.Bind;
+
+event TestCase {
+	string msg;
+	
+	static action create(string msg) returns action<integer, float, string> {
+		return TestCase(msg).actionWith3Args;
+	}
+	
+	action actionWith3Args(integer a, float b, string c) {
+		if  a != 1 or b != 2.0 or c != "hello" {
+			send TestFailed(msg) to "TestResult";
+		}
+	}
+}
+
+monitor Test {
+	action onload() {
+		Bind.create(TestCase.create("Call sequence")).call([<any>1, 2.0, "hello"]);
+		Bind.create(TestCase.create("Call sequence partial")).bind1(1).call([<any>2.0, "hello"]);
+
+		Bind.create(TestCase.create("Call3")).call3(1, 2.0, "hello");
+		Bind.create(TestCase.create("Call2")).bind1(1).call2(2.0, "hello");
+		Bind.create(TestCase.create("Call1")).bind2(1, 2.0).call1("hello");
+		Bind.create(TestCase.create("Call0")).bind3(1, 2.0, "hello").call0();
+		
+		send TestComplete() to "TestResult";
+	}
+}

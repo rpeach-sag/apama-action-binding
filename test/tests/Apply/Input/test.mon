@@ -1,0 +1,22 @@
+using utils.Assert;
+using utils.TestComplete;
+
+using com.industry.actions.Bind;
+
+monitor Test {  
+	action onload() {
+		Assert.equal("Apply sequence", Bind.create(actionWith3Args).apply([<any>1, 2.0, "hello"]), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Apply sequence partial", Bind.create(actionWith3Args).bindIndex(1, 2.0).apply([<any>1, "hello"]), [<any> 1, 2.0, "hello"]);
+		
+		Assert.equal("Apply3", Bind.create(actionWith3Args).apply3(1, 2.0, "hello"), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Apply2", Bind.create(actionWith3Args).bind1(1).apply2(2.0, "hello"), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Apply1", Bind.create(actionWith3Args).bind2(1, 2.0).apply1("hello"), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Apply0", Bind.create(actionWith3Args).bind3(1, 2.0, "hello").apply0(), [<any> 1, 2.0, "hello"]);
+		
+		send TestComplete() to "TestResult";
+	} 
+	
+	action actionWith3Args(integer a, float b, string c) returns sequence<any> {
+		return [<any> a, b, c];
+	}
+}

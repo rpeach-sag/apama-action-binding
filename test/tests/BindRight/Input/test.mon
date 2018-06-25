@@ -1,0 +1,22 @@
+using utils.Assert;
+using utils.TestComplete;
+
+using com.industry.actions.Bind;
+
+monitor Test {  
+	action onload() {
+		Assert.equal("Bind sequence", Bind.create(actionWith3Args).bindRight([<any>1, 2.0, "hello"]).apply0(), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Partial bind sequence", Bind.create(actionWith3Args).bindRight([<any>"hello"]).bindRight([<any>1, 2.0]).apply0(), [<any> 1, 2.0, "hello"]);
+		
+		Assert.equal("Bind3", Bind.create(actionWith3Args).bindRight3(1, 2.0, "hello").apply0(), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Partial Bind 1->2", Bind.create(actionWith3Args).bindRight1("hello").bindRight2(1, 2.0).apply0(), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Partial Bind 2->1", Bind.create(actionWith3Args).bindRight2(2.0, "hello").bindRight1(1).apply0(), [<any> 1, 2.0, "hello"]);
+		Assert.equal("Partial Bind 1->1->1", Bind.create(actionWith3Args).bindRight1("hello").bindRight1(2.0).bindRight1(1).apply0(), [<any> 1, 2.0, "hello"]);
+		
+		send TestComplete() to "TestResult";
+	} 
+	
+	action actionWith3Args(integer a, float b, string c) returns sequence<any> {
+		return [<any> a, b, c];
+	}
+}

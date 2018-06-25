@@ -1,0 +1,9 @@
+#  This is the ActionBinding home installation
+
+VARIABLE; ACTION_BINDING_HOME; <%ACTION_BINDING_HOME%>; R
+
+STRING_SUBSTITUTION; ACTION_BINDING_HOME; <%ACTION_BINDING_HOME%>; This is contributed by ActionBinding; R
+
+BUNDLE_CATALOG; ACTION_BINDING_HOME/bundles
+
+VERSION; 1.0

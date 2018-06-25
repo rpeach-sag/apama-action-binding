@@ -1,0 +1,7 @@
+**/*.log
+/.dependencies
+/.project
+config
+output
+**/*.pyc
+eplcoverage

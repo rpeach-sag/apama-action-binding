@@ -1,0 +1,16 @@
+using utils.Assert;
+using utils.TestComplete;
+
+using com.industry.actions.Bind;
+
+monitor Test {  
+	action onload() {
+		Assert.equal("Bind index", Bind.create(actionWith3Args).bindIndex(1, 2.0).bindIndex(1, "hello").bindIndex(0, 1).apply0(), [<any> 1, 2.0, "hello"]);
+		
+		send TestComplete() to "TestResult";
+	} 
+	
+	action actionWith3Args(integer a, float b, string c) returns sequence<any> {
+		return [<any> a, b, c];
+	}
+}

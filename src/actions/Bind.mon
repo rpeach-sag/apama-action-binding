@@ -1,0 +1,183 @@
+/* 
+* Copyright (c) 2018 Software AG, Darmstadt, Germany and/or its licensors
+*
+* SPDX-License-Identifier: Apache-2.0
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+package com.industry.actions;
+
+event Bind {
+	any f;
+	dictionary<integer, any> boundArgs;
+	
+	static action create(any f) returns Bind {
+		if f.getTypeName().find("action<") != 0 {
+			throw com.apama.exceptions.Exception("Can only Bind an action, was: " + f.getTypeName(), "IllegalArgumentException");
+		}
+		return Bind(f, new dictionary<integer, any>);
+	}
+	
+	action bind(sequence<any> argSeq) returns Bind {		
+		sequence<string> argNames := f.getActionParameterNames();
+		integer i := 0;
+		while i < argNames.size() {
+			if argSeq.size() = 0 {
+				break;
+			}
+			if not boundArgs.hasKey(i) {
+				boundArgs[i] := argSeq[0];
+				argSeq.remove(0);
+			}
+			i := i + 1;
+		}
+		if argSeq.size() > 0 {
+			throw com.apama.exceptions.Exception("Too many args were bound", "IllegalArgumentException");
+		}
+		return self;
+	}
+	
+	action bind1(any arg) returns Bind {
+		return bind([arg]);
+	}
+	
+	action bind2(any arg1, any arg2) returns Bind {
+		return bind([arg1, arg2]);
+	}
+	
+	action bind3(any arg1, any arg2, any arg3) returns Bind {
+		return bind([arg1, arg2, arg3]);
+	}
+	
+	action bindRight(sequence<any> argSeq) returns Bind {		
+		sequence<string> argNames := f.getActionParameterNames();
+		integer i := argNames.size();
+		while i > 0 {
+			if argSeq.size() = 0 {
+				break;
+			}
+			i := i - 1;
+			if not boundArgs.hasKey(i) {
+				boundArgs[i] := argSeq[argSeq.size() - 1];
+				argSeq.remove(argSeq.size() - 1);
+			}
+		}
+		if argSeq.size() > 0 {
+			throw com.apama.exceptions.Exception("Too many args were bound", "IllegalArgumentException");
+		}
+		return self;
+	}
+	
+	action bindRight1(any arg) returns Bind {
+		return bindRight([arg]);
+	}
+	
+	action bindRight2(any arg1, any arg2) returns Bind {
+		return bindRight([arg1, arg2]);
+	}
+	
+	action bindRight3(any arg1, any arg2, any arg3) returns Bind {
+		return bindRight([arg1, arg2, arg3]);
+	}
+	
+	action bindIndex(integer i, any arg) returns Bind {
+		sequence<string> argNames := f.getActionParameterNames();
+		integer j := 0;
+		integer k;
+		if i >= 0 {
+			k := i;
+		} else {
+			k := argNames.size() + i;
+		}
+		while j < argNames.size() {
+			if not boundArgs.hasKey(j) {
+				if k = 0 {
+					break;
+				}
+				k := k - 1;
+			}
+			j := j + 1;
+		}
+		if j > argNames.size() or k != 0 {
+			throw com.apama.exceptions.Exception("Arg " + i.toString() + " does not exist", "IllegalArgumentException");
+		}
+		boundArgs[j] := arg;
+		return self;
+	}
+	
+	action apply(sequence<any> argSeq) returns any {
+		return bind(argSeq).apply0();
+	}
+	
+	action apply0() returns any {
+		if boundArgs.size() = f.getActionParameterNames().size() {
+			// dictionary values are sorted by keys so we don't have to worry about ordering
+			return f.getGenericAction()(boundArgs.values());
+		} else {
+			throw com.apama.exceptions.Exception("All arguments must be bound, there are " + (f.getActionParameterNames().size() - boundArgs.size()).toString() + " unbound arguments", "IllegalArgumentException");
+		}
+	}
+	
+	action apply1(any arg) returns any {
+		return apply([arg]);
+	}
+	
+	action apply2(any arg1, any arg2) returns any {
+		return apply([arg1, arg2]);
+	}
+	
+	action apply3(any arg1, any arg2, any arg3) returns any {
+		return apply([arg1, arg2, arg3]);
+	}
+	
+	action applyRight(sequence<any> argSeq) returns any {
+		return bindRight(argSeq).apply0();
+	}
+	
+	action applyRight1(any arg) returns any {
+		return applyRight([arg]);
+	}
+	
+	action applyRight2(any arg1, any arg2) returns any {
+		return applyRight([arg1, arg2]);
+	}
+	
+	action applyRight3(any arg1, any arg2, any arg3) returns any {
+		return applyRight([arg1, arg2, arg3]);
+	}
+	
+	action call(sequence<any> argSeq) {
+		any discard := apply(argSeq);
+	}
+	
+	action call0() {
+		any discard := apply0();
+	}
+	
+	action call1(any arg) {
+		call([arg]);
+	}
+	
+	action call2(any arg1, any arg2) {
+		call([arg1, arg2]);
+	}
+	
+	action call3(any arg1, any arg2, any arg3) {
+		call([arg1, arg2, arg3]);
+	}
+	
+	action getGenericAction() returns action<sequence<any> > returns any {
+		return apply;
+	}
+}
