@@ -141,22 +141,6 @@ event Bind {
 		return apply([arg1, arg2, arg3]);
 	}
 	
-	action applyRight(sequence<any> argSeq) returns any {
-		return bindRight(argSeq).apply0();
-	}
-	
-	action applyRight1(any arg) returns any {
-		return applyRight([arg]);
-	}
-	
-	action applyRight2(any arg1, any arg2) returns any {
-		return applyRight([arg1, arg2]);
-	}
-	
-	action applyRight3(any arg1, any arg2, any arg3) returns any {
-		return applyRight([arg1, arg2, arg3]);
-	}
-	
 	action call(sequence<any> argSeq) {
 		any discard := apply(argSeq);
 	}
