@@ -1,4 +1,4 @@
-# Action Binding
+# Action Binding [![Build Status](https://travis-ci.org/rpeach-sag/apama-action-binding.svg)](https://travis-ci.org/rpeach-sag/apama-action-binding) [![Coverage Status](https://coveralls.io/repos/github/rpeach-sag/apama-action-binding/badge.svg)](https://coveralls.io/github/rpeach-sag/apama-action-binding)
 
 Action binding brings a popular JavaScript feature to [Apama](http://www.apamacommunity.com/)'s Event Programming Language (EPL): Function Binding.
 ```javascript
