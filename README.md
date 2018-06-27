@@ -10,7 +10,7 @@ action<any> helloName := Bind.create(concatStrings)
 helloName("World"); // Prints: Hello World!
 helloName("Developer"); // Prints: Hello Developer!
 ...
-action concatStrings(string a, string b, string c) returns string {
+action concatStrings(string a, string b, string c) {
 	log a + b + c;
 }
 ```
