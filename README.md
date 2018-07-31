@@ -125,6 +125,8 @@ Apply allows you to call a bound action and get a returned value. (Use [Call](#c
 ```javascript
 Bind.create(concatStrings).bind1("Hello ").apply(["World", "!"]);
 // returns "Hello World!"
+Bind.create(concatStrings).bind1("Hello ").getGenericAction()(["World", "!"]);
+// returns "Hello World!"
 ``` 
 **apply0** - Call the action with no arguments and return a value. Useful if all arguments have already been bound.
 ```javascript
