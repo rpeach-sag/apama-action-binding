@@ -29,15 +29,25 @@ event Bind {
 		return Bind(f, new dictionary<integer, any>);
 	}
 	
-	action bind(sequence<any> argSeq) returns Bind {		
+	action cloneShallow() returns Bind {
+		dictionary<integer, any> boundArgsClone := new dictionary<integer, any>;
+		integer i;
+		for i in boundArgs.keys() {
+			boundArgsClone.add(i, boundArgs[i]);
+		}
+		return Bind(f, boundArgsClone);
+	}
+	
+	action bind(sequence<any> argSeq) returns Bind {
+		Bind result := cloneShallow();
 		sequence<string> argNames := f.getActionParameterNames();
 		integer i := 0;
 		while i < argNames.size() {
 			if argSeq.size() = 0 {
 				break;
 			}
-			if not boundArgs.hasKey(i) {
-				boundArgs[i] := argSeq[0];
+			if not result.boundArgs.hasKey(i) {
+				result.boundArgs[i] := argSeq[0];
 				argSeq.remove(0);
 			}
 			i := i + 1;
@@ -45,7 +55,7 @@ event Bind {
 		if argSeq.size() > 0 {
 			throw com.apama.exceptions.Exception("Too many args were bound", "IllegalArgumentException");
 		}
-		return self;
+		return result;
 	}
 	
 	action bind1(any arg) returns Bind {
@@ -60,7 +70,8 @@ event Bind {
 		return bind([arg1, arg2, arg3]);
 	}
 	
-	action bindRight(sequence<any> argSeq) returns Bind {		
+	action bindRight(sequence<any> argSeq) returns Bind {	
+		Bind result := cloneShallow();
 		sequence<string> argNames := f.getActionParameterNames();
 		integer i := argNames.size();
 		while i > 0 {
@@ -68,15 +79,15 @@ event Bind {
 				break;
 			}
 			i := i - 1;
-			if not boundArgs.hasKey(i) {
-				boundArgs[i] := argSeq[argSeq.size() - 1];
+			if not result.boundArgs.hasKey(i) {
+				result.boundArgs[i] := argSeq[argSeq.size() - 1];
 				argSeq.remove(argSeq.size() - 1);
 			}
 		}
 		if argSeq.size() > 0 {
 			throw com.apama.exceptions.Exception("Too many args were bound", "IllegalArgumentException");
 		}
-		return self;
+		return result;
 	}
 	
 	action bindRight1(any arg) returns Bind {
@@ -92,6 +103,7 @@ event Bind {
 	}
 	
 	action bindIndex(integer i, any arg) returns Bind {
+		Bind result := cloneShallow();
 		sequence<string> argNames := f.getActionParameterNames();
 		integer j := 0;
 		integer k;
@@ -101,7 +113,7 @@ event Bind {
 			k := argNames.size() + i;
 		}
 		while j < argNames.size() {
-			if not boundArgs.hasKey(j) {
+			if not result.boundArgs.hasKey(j) {
 				if k = 0 {
 					break;
 				}
@@ -112,8 +124,8 @@ event Bind {
 		if j > argNames.size() or k != 0 {
 			throw com.apama.exceptions.Exception("Arg " + i.toString() + " does not exist", "IllegalArgumentException");
 		}
-		boundArgs[j] := arg;
-		return self;
+		result.boundArgs[j] := arg;
+		return result;
 	}
 	
 	action apply(sequence<any> argSeq) returns any {
